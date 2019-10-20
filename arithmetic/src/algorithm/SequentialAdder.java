@@ -1,16 +1,16 @@
 package algorithm;
 
+import utils.DataUtils;
 import utils.Paths;
 
+import static utils.DataUtils.getElapsedTimeMilli;
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class SequentialAdder
 {
-    static int[] compute(int[] number1, int[] number2)
+    static void compute(int[] number1, int[] number2, int[] sum)
     {
         int length = number1.length;
-
-        int[] sum = new int[length + 1];
 
         int carry = 0;
         for (int i = 0; i < length; i++)
@@ -21,17 +21,19 @@ public class SequentialAdder
         }
         if (carry != 0) sum[length] = carry;
 
-        return sum;
     }
 
     public static double run(int[] number1, int[] number2)
     {
-        Long startTime = System.nanoTime();
+        int maxLength = number1.length + 1;
+        int[] sum = new int[maxLength];
 
-        int[] sum = compute(number1, number2);
+        long startTime = System.nanoTime();
 
-        Long endTime = System.nanoTime();
-        double elapsedTime = (double) (endTime - startTime) / 1000000;
+        compute(number1, number2, sum);
+
+        long endTime = System.nanoTime();
+        double elapsedTime = getElapsedTimeMilli(startTime, endTime);
 
         saveBigNumberToFile(sum, Paths.SEQUENTIAL_SUM);
 

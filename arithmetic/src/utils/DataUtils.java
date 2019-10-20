@@ -49,16 +49,16 @@ public class DataUtils
         return line;
     }
 
-    static List<int[]> extendNumbersToMaxLength(List<int[]> numbers)
+    public static List<int[]> extendNumbersToMaxLength(List<int[]> numbers)
     {
-        int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length + 1;
+        int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length;
 
         return numbers.stream()
                 .map(number -> number.length == maxLength ? number : Arrays.copyOf(number, maxLength))
                 .collect(Collectors.toList());
     }
 
-    public static double getElapsedTimeMilli(Long startTime, Long endTime)
+    public static double getElapsedTimeMilli(long startTime, long endTime)
     {
         return (double) (endTime - startTime) / 1000000;
     }

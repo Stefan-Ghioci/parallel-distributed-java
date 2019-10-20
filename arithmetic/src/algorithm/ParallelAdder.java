@@ -4,6 +4,7 @@ import structure.AdderThread;
 import utils.DataUtils;
 import utils.Paths;
 
+import static utils.DataUtils.getElapsedTimeMilli;
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class ParallelAdder
@@ -52,20 +53,21 @@ public class ParallelAdder
 
     public static double run(Integer threadsCount, int[] number1, int[] number2)
     {
-        int length = number1.length;
+        int maxLength = number1.length + 1;
 
-        int[] incompleteSum = new int[length];
-        int[] carryFlags = new int[length];
+        int[] incompleteSum = new int[maxLength];
+        int[] carryFlags = new int[maxLength];
 
         Thread[] threads = createAdderThreads(number1, number2, threadsCount, incompleteSum, carryFlags);
 
-        Long startTime = System.nanoTime();
+        long startTime = System.nanoTime();
 
         compute(threads);
-        int[] sum = SequentialAdder.compute(incompleteSum, carryFlags);
+        int[] sum = new int[maxLength];
+        SequentialAdder.compute(incompleteSum, carryFlags, sum);
 
-        Long endTime = System.nanoTime();
-        double elapsedTime = DataUtils.getElapsedTimeMilli(startTime, endTime);
+        long endTime = System.nanoTime();
+        double elapsedTime = getElapsedTimeMilli(startTime, endTime);
 
         saveBigNumberToFile(sum, Paths.PARALLEL_RESULT);
 

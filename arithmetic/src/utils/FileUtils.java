@@ -30,7 +30,7 @@ public class FileUtils
         }
     }
 
-    private static List<int[]> getBigNumberListFromFile(String filename)
+    public static List<int[]> getBigNumberListFromFile(String filename)
     {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename)))
         {
@@ -92,13 +92,6 @@ public class FileUtils
         return false;
     }
 
-    public static List<int[]> getNumbers(String filename)
-    {
-        List<int[]> generatedNumbers = getBigNumberListFromFile(filename);
-
-        return DataUtils.extendNumbersToMaxLength(generatedNumbers);
-    }
-
     public static void saveBigNumberToFile(int[] sum, String filename)
     {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, Charset.defaultCharset(), false)))
@@ -119,7 +112,10 @@ public class FileUtils
     {
         List<String> data = new ArrayList<>();
 
-        data.add(minDigits + "-" + maxDigits);
+        if (minDigits.equals(maxDigits))
+            data.add(String.valueOf(minDigits));
+        else
+            data.add(minDigits + "-" + maxDigits);
         data.add(String.valueOf(sequentialTime));
         data.add(String.valueOf(parallelTime));
         data.add(String.valueOf(threadsCount));
