@@ -19,9 +19,11 @@ public class Start
         generateBigDataFile(Paths.NUMBERS, 2, minDigits, maxDigits);
 
         List<int[]> numbers = getNumbers(Paths.NUMBERS);
+        int[] number1 = numbers.get(0);
+        int[] number2 = numbers.get(1);
 
-        double sequentialTime = SequentialAdder.runSequential(numbers);
-        double parallelTime = ParallelAdder.runParallel(threadsCount, numbers);
+        double sequentialTime = SequentialAdder.runSequential(number1, number2);
+        double parallelTime = ParallelAdder.runParallel(threadsCount, number1, number2);
 
         printTimeResults(sequentialTime, parallelTime);
 

@@ -54,10 +54,8 @@ public class ParallelAdder
         return threads;
     }
 
-    public static double runParallel(Integer threadsCount, List<int[]> numbers)
+    public static double runParallel(Integer threadsCount, int[] number1, int[] number2)
     {
-        int[] number1 = numbers.get(0);
-        int[] number2 = numbers.get(1);
         int length = number1.length;
 
         int[] incompleteSum = new int[length];

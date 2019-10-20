@@ -2,8 +2,6 @@ package algorithm;
 
 import utils.Paths;
 
-import java.util.List;
-
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class SequentialAdder
@@ -25,11 +23,8 @@ public class SequentialAdder
         return sum;
     }
 
-    public static double runSequential(List<int[]> numbers)
+    public static double runSequential(int[] number1, int[] number2)
     {
-        int[] number1 = numbers.get(0);
-        int[] number2 = numbers.get(1);
-
         Long startTime = System.nanoTime();
 
         int[] sum = compute(number1, number2);
