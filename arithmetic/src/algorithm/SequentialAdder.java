@@ -15,15 +15,16 @@ public class SequentialAdder
         int carry = 0;
         for (int i = 0; i < length; i++)
         {
-            sum[i] = (number1[i] + number2[i] + carry) % 10;
-            carry = (number1[i] + number2[i] + carry) / 10;
+            int digitSum = number1[i] + number2[i] + carry;
+            sum[i] = digitSum % 10;
+            carry = digitSum / 10;
         }
         if (carry != 0) sum[length] = carry;
 
         return sum;
     }
 
-    public static double runSequential(int[] number1, int[] number2)
+    public static double run(int[] number1, int[] number2)
     {
         Long startTime = System.nanoTime();
 

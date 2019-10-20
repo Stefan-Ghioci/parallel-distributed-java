@@ -4,16 +4,12 @@ import structure.AdderThread;
 import utils.DataUtils;
 import utils.Paths;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class ParallelAdder
 {
     @SuppressWarnings("ForLoopReplaceableByForEach")
-    private static void compute(Thread[] threads)
+    static void compute(Thread[] threads)
     {
         for (int i = 0, threadsLength = threads.length; i < threadsLength; i++)
             threads[i].start();
@@ -54,7 +50,7 @@ public class ParallelAdder
         return threads;
     }
 
-    public static double runParallel(Integer threadsCount, int[] number1, int[] number2)
+    public static double run(Integer threadsCount, int[] number1, int[] number2)
     {
         int length = number1.length;
 

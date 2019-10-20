@@ -1,4 +1,4 @@
-import algorithm.ParallelAdder;
+import algorithm.OptimisedParallelAdder;
 import algorithm.SequentialAdder;
 import utils.Paths;
 
@@ -6,10 +6,8 @@ import java.util.List;
 
 import static utils.FileUtils.*;
 
-
-public class Start
+public class OptimisedStart
 {
-
     public static void main(String[] args)
     {
         Integer threadsCount = Integer.valueOf(args[0]);
@@ -23,7 +21,7 @@ public class Start
         int[] number2 = numbers.get(1);
 
         double sequentialTime = SequentialAdder.run(number1, number2);
-        double parallelTime = ParallelAdder.run(threadsCount, number1, number2);
+        double parallelTime = OptimisedParallelAdder.run(threadsCount, number1, number2);
 
         System.out.println("-------------------------------------");
 
@@ -35,7 +33,6 @@ public class Start
         System.out.println("-------------------------------------");
 
         if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT))
-            saveResultsToCsv(Paths.RESULTS, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
+            saveResultsToCsv(Paths.RESULTS_OPTIMISED, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
     }
-
 }

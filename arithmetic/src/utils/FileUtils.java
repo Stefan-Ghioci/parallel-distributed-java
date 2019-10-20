@@ -124,6 +124,6 @@ public class FileUtils
         data.add(String.valueOf(parallelTime));
         data.add(String.valueOf(threadsCount));
 
-        writeDataToCsvFile(resultsFilename,data);
+        writeDataToCsvFile(resultsFilename, data);
     }
 }
