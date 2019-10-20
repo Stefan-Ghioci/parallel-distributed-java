@@ -1,2 +1,2 @@
-# Parallel and Distributed Programming
-Projects based on parallel programming implemented in Java.
+# Lab 00
+Utils methods for future solutions that involve big numbers and files.
