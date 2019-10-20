@@ -4,15 +4,17 @@ import structure.AdderThread;
 
 public class ParallelAdder
 {
+    @SuppressWarnings("ForLoopReplaceableByForEach")
     public static void compute(Thread[] threads)
     {
-        for (Thread thread : threads) thread.start();
+        for (int i = 0, threadsLength = threads.length; i < threadsLength; i++)
+            threads[i].start();
 
-        for (Thread thread : threads)
+        for (int i = 0, threadsLength = threads.length; i < threadsLength; i++)
         {
             try
             {
-                thread.join();
+                threads[i].join();
             }
             catch (InterruptedException e)
             {
@@ -21,22 +23,27 @@ public class ParallelAdder
         }
     }
 
-    public static Thread[] createAdderThreads(int[] number1,
-                                              int[] number2,
-                                              int threadsCount,
-                                              int[] sum,
-                                              int[] carryFlags)
+    public static Thread[] createAdderThreads(int[] number1, int[] number2, int threadsCount, int[] sum)
     {
         int length = number1.length;
+        int intervalLength = length / threadsCount;
+        int remainder = length % threadsCount;
+
         Thread[] threads = new Thread[threadsCount];
 
-        for (int i = 0; i < threadsCount; i++)
-        {
-            int left = i * (int) Math.ceil((double) length / threadsCount);
-            int right = Math.min((i + 1) * (int) Math.ceil((double) length / threadsCount), length);
 
-            threads[i] = new AdderThread(number1, number2, sum, carryFlags, left, right);
+        threads[0] = new AdderThread(number1, number2, sum, 0, intervalLength + remainder, null);
+
+        int i = 1;
+        while (i < threadsCount)
+        {
+            int left = i * intervalLength + remainder;
+            int right = (i + 1) * intervalLength + remainder;
+
+            threads[i] = new AdderThread(number1, number2, sum, left, right, threads[i - 1]);
+            i++;
         }
         return threads;
     }
+
 }

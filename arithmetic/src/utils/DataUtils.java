@@ -46,7 +46,7 @@ class DataUtils
         return line;
     }
 
-    static List<int[]> normaliseNumberLengths(List<int[]> numbers)
+    static List<int[]> extendNumbersToMaxLength(List<int[]> numbers)
     {
         int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length;
 

@@ -96,7 +96,7 @@ public class FileUtils
     {
         List<int[]> generatedNumbers = getBigNumberListFromFile(filename);
 
-        return DataUtils.normaliseNumberLengths(generatedNumbers);
+        return DataUtils.extendNumbersToMaxLength(generatedNumbers);
     }
 
     public static void saveBigNumberToFile(int[] sum, String filename)

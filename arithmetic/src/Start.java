@@ -23,23 +23,24 @@ public class Start
         double sequentialTime = runSequential(numbers);
         double parallelTime = runParallel(threadsCount, numbers);
 
+        printTimeResults(sequentialTime, parallelTime);
+
         if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT))
             saveResultsToCsv(Paths.RESULTS, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
     }
 
     private static double runParallel(Integer threadsCount, List<int[]> numbers)
     {
-        int[] sum = new int[numbers.get(0).length + 1];
-        int[] carryFlags = new int[numbers.get(0).length + 1];
+        int sumMaxLength = numbers.get(0).length + 1;
+        int[] sum = new int[sumMaxLength];
 
         Thread[] threads = ParallelAdder
-                .createAdderThreads(numbers.get(0), numbers.get(1), threadsCount, sum, carryFlags);
+                .createAdderThreads(numbers.get(0), numbers.get(1), threadsCount, sum);
 
 
         Long startTime = System.nanoTime();
 
         ParallelAdder.compute(threads);
-        sum = SequentialAdder.compute(sum, carryFlags);
 
         Long endTime = System.nanoTime();
         double elapsedTime = (double) (endTime - startTime) / 1000000;
@@ -61,6 +62,18 @@ public class Start
         saveBigNumberToFile(sum, Paths.SEQUENTIAL_SUM);
 
         return elapsedTime;
+    }
+
+    private static void printTimeResults(double sequentialTime, double parallelTime)
+    {
+        System.out.println("-------------------------------------");
+
+        System.out.println("Sequential Time: ");
+        System.out.println(sequentialTime + "ms");
+        System.out.println("Parallel Time: ");
+        System.out.println(parallelTime + "ms");
+
+        System.out.println("-------------------------------------");
     }
 
 
