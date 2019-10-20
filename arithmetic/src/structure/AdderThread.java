@@ -1,5 +1,7 @@
 package structure;
 
+import java.util.Map;
+
 public class AdderThread extends Thread
 {
     private int[] number1;
@@ -7,35 +9,28 @@ public class AdderThread extends Thread
     private int[] sum;
     private int left;
     private int right;
-    private Thread previousThread;
+    private Map<Integer, Integer> carryFlags;
 
-    public AdderThread(int[] number1, int[] number2, int[] sum, int left, int right, Thread previousThread)
+    public AdderThread(int[] number1,
+                       int[] number2,
+                       int[] sum,
+                       int left,
+                       int right,
+                       Map<Integer, Integer> carryFlags)
     {
         this.number1 = number1;
         this.number2 = number2;
         this.sum = sum;
         this.left = left;
         this.right = right;
-        this.previousThread = previousThread;
+        this.carryFlags = carryFlags;
     }
 
     @Override
     public void run()
     {
 
-        try
-        {
-            this.previousThread.join();
-        }
-        catch (NullPointerException ignored)
-        {
-        }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-
-        int carry = sum[left];
+        int carry = 0;
 
         for (int i = left; i < right; i++)
         {
@@ -43,6 +38,6 @@ public class AdderThread extends Thread
             carry = (number1[i] + number2[i] + carry) / 10;
         }
 
-        if (carry != 0) sum[right] = carry;
+        if (carry != 0) carryFlags.put(right, carry);
     }
 }

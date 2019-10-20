@@ -20,48 +20,13 @@ public class Start
 
         List<int[]> numbers = getNumbers(Paths.NUMBERS);
 
-        double sequentialTime = runSequential(numbers);
-        double parallelTime = runParallel(threadsCount, numbers);
+        double sequentialTime = SequentialAdder.runSequential(numbers);
+        double parallelTime = ParallelAdder.runParallel(threadsCount, numbers);
 
         printTimeResults(sequentialTime, parallelTime);
 
         if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT))
             saveResultsToCsv(Paths.RESULTS, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
-    }
-
-    private static double runParallel(Integer threadsCount, List<int[]> numbers)
-    {
-        int sumMaxLength = numbers.get(0).length + 1;
-        int[] sum = new int[sumMaxLength];
-
-        Thread[] threads = ParallelAdder
-                .createAdderThreads(numbers.get(0), numbers.get(1), threadsCount, sum);
-
-
-        Long startTime = System.nanoTime();
-
-        ParallelAdder.compute(threads);
-
-        Long endTime = System.nanoTime();
-        double elapsedTime = (double) (endTime - startTime) / 1000000;
-
-        saveBigNumberToFile(sum, Paths.PARALLEL_RESULT);
-
-        return elapsedTime;
-    }
-
-    private static double runSequential(List<int[]> numbers)
-    {
-        Long startTime = System.nanoTime();
-
-        int[] sum = SequentialAdder.compute(numbers.get(0), numbers.get(1));
-
-        Long endTime = System.nanoTime();
-        double elapsedTime = (double) (endTime - startTime) / 1000000;
-
-        saveBigNumberToFile(sum, Paths.SEQUENTIAL_SUM);
-
-        return elapsedTime;
     }
 
     private static void printTimeResults(double sequentialTime, double parallelTime)

@@ -1,10 +1,13 @@
 package utils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class DataUtils
+public class DataUtils
 {
     static int[] stringToBigNumber(String string)
     {
@@ -48,10 +51,15 @@ class DataUtils
 
     static List<int[]> extendNumbersToMaxLength(List<int[]> numbers)
     {
-        int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length;
+        int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length + 1;
 
         return numbers.stream()
                 .map(number -> number.length == maxLength ? number : Arrays.copyOf(number, maxLength))
                 .collect(Collectors.toList());
+    }
+
+    public static double getElapsedTimeMilli(Long startTime, Long endTime)
+    {
+        return (double) (endTime - startTime) / 1000000;
     }
 }
