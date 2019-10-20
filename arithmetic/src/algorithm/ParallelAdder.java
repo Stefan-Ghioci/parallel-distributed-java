@@ -35,7 +35,7 @@ public class ParallelAdder
                                                int[] number2,
                                                int threadsCount,
                                                int[] sum,
-                                               Map<Integer, Integer> carryFlags)
+                                               int[] carryFlags)
     {
         int length = number1.length;
         int intervalLength = length / threadsCount;
@@ -61,16 +61,14 @@ public class ParallelAdder
         int length = number1.length;
 
         int[] incompleteSum = new int[length];
-        int[] leftOvers = new int[length];
-        Map<Integer, Integer> carryFlags = new HashMap<>();
+        int[] carryFlags = new int[length];
 
         Thread[] threads = createAdderThreads(number1, number2, threadsCount, incompleteSum, carryFlags);
 
         Long startTime = System.nanoTime();
 
         compute(threads);
-        carryFlags.forEach((key, value) -> leftOvers[key] = value);
-        int[] sum = SequentialAdder.compute(incompleteSum, leftOvers);
+        int[] sum = SequentialAdder.compute(incompleteSum, carryFlags);
 
         Long endTime = System.nanoTime();
         double elapsedTime = DataUtils.getElapsedTimeMilli(startTime, endTime);
