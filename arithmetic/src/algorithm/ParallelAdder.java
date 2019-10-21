@@ -4,6 +4,9 @@ import structure.AdderThread;
 import utils.DataUtils;
 import utils.Paths;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static utils.DataUtils.getElapsedTimeMilli;
 import static utils.FileUtils.saveBigNumberToFile;
 
@@ -30,9 +33,9 @@ public class ParallelAdder
 
     private static Thread[] createAdderThreads(int[] number1,
                                                int[] number2,
-                                               int threadsCount,
+                                               Integer threadsCount,
                                                int[] sum,
-                                               int[] carryFlags)
+                                               Map<Integer, Integer> carryFlags)
     {
         int length = number1.length;
         int intervalLength = length / threadsCount;
@@ -45,26 +48,25 @@ public class ParallelAdder
         {
             left = right;
             right = remainder > 0 ? left + intervalLength + 1 : left + intervalLength;
+            Thread previousThread = i == 0 ? null : threads[i - 1];
 
-            threads[i] = new AdderThread(number1, number2, sum, left, right, carryFlags);
+            threads[i] = new AdderThread(number1, number2, sum, left, right, carryFlags, previousThread);
         }
         return threads;
     }
-
     public static double run(Integer threadsCount, int[] number1, int[] number2)
     {
         int maxLength = number1.length + 1;
 
-        int[] incompleteSum = new int[maxLength];
-        int[] carryFlags = new int[maxLength];
+        int[] sum = new int[maxLength];
+        Map<Integer, Integer> carryFlags = new HashMap<>();
 
-        Thread[] threads = createAdderThreads(number1, number2, threadsCount, incompleteSum, carryFlags);
+        Thread[] threads = createAdderThreads(number1, number2, threadsCount, sum, carryFlags);
 
         long startTime = System.nanoTime();
 
-        compute(threads);
-        int[] sum = new int[maxLength];
-        SequentialAdder.compute(incompleteSum, carryFlags, sum);
+        ParallelAdder.compute(threads);
+        sum[maxLength - 1] = carryFlags.get(maxLength - 1);
 
         long endTime = System.nanoTime();
         double elapsedTime = getElapsedTimeMilli(startTime, endTime);

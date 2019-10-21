@@ -1,5 +1,7 @@
 package structure;
 
+import java.util.Map;
+
 public class AdderThread extends Thread
 {
     private int[] number1;
@@ -7,14 +9,15 @@ public class AdderThread extends Thread
     private int[] sum;
     private int left;
     private int right;
-    private int[] carryFlags;
+    private Map<Integer, Integer> carryFlags;
+    private Thread previousThread;
 
     public AdderThread(int[] number1,
                        int[] number2,
                        int[] sum,
                        int left,
                        int right,
-                       int[] carryFlags)
+                       Map<Integer, Integer> carryFlags, Thread previousThread)
     {
         this.number1 = number1;
         this.number2 = number2;
@@ -22,17 +25,44 @@ public class AdderThread extends Thread
         this.left = left;
         this.right = right;
         this.carryFlags = carryFlags;
+        this.previousThread = previousThread;
     }
 
     @Override
     public void run()
     {
-        for (int i = left; i < right; i++)
+        try
         {
-            int digitSum = number1[i] + number2[i];
-            sum[i] = digitSum % 10;
-            if (digitSum / 10 != 0)
-                carryFlags[i + 1] = 1;
+            int carry = 0;
+            for (int i = left; i < right; i++)
+            {
+                int digitSum = number1[i] + number2[i] + carry;
+                sum[i] = digitSum % 10;
+                carry = digitSum / 10;
+            }
+
+            carryFlags.put(right, carry);
+
+            previousThread.join();
+
+            carry = carryFlags.get(left);
+
+            int i = left;
+            while (carry != 0)
+            {
+                int digitSum = sum[i] + carry;
+                sum[i] = digitSum % 10;
+                carry = digitSum / 10;
+                i++;
+            }
+        }
+        catch (NullPointerException ignored)
+        {
+            // first thread will wait for null thread
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
         }
     }
 }
