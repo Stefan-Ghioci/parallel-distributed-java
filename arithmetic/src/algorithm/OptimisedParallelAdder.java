@@ -1,12 +1,10 @@
 package algorithm;
 
-import structure.AdderThread;
+import structure.OptimisedAdderThread;
 import utils.Paths;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static utils.DataUtils.getElapsedTimeMilli;
+import static utils.DataUtils.initializeCarryFlags;
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class OptimisedParallelAdder
@@ -17,7 +15,7 @@ public class OptimisedParallelAdder
         int maxLength = number1.length + 1;
 
         int[] sum = new int[maxLength];
-        int[] carryFlags = new int[threadsCount];
+        int[] carryFlags = initializeCarryFlags(threadsCount);
 
         Thread[] threads = createOptimisedAdderThreads(number1, number2, threadsCount, sum, carryFlags);
 
@@ -39,7 +37,20 @@ public class OptimisedParallelAdder
                                                         int[] sum,
                                                         int[] carryFlags)
     {
-        //TODO implement OptimisedAdderThread
-        return new Thread[0];
+        int length = number1.length;
+        int intervalLength = length / threadsCount;
+        int remainder = length % threadsCount;
+
+        Thread[] threads = new Thread[threadsCount];
+
+
+        for (int i = 0, left, right = 0; i < threadsCount; i++, remainder--)
+        {
+            left = right;
+            right = remainder > 0 ? left + intervalLength + 1 : left + intervalLength;
+
+            threads[i] = new OptimisedAdderThread(i, number1, number2, sum, left, right, carryFlags);
+        }
+        return threads;
     }
 }

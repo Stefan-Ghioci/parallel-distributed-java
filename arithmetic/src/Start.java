@@ -4,7 +4,7 @@ import utils.Paths;
 
 import java.util.List;
 
-import static utils.DataUtils.extendNumbersToMaxLength;
+import static utils.DataUtils.extendArrayMemory;
 import static utils.FileUtils.*;
 
 
@@ -23,7 +23,7 @@ public class Start
         List<int[]> numbers = getBigNumberListFromFile(Paths.NUMBERS);
 
         if (!minDigits.equals(maxDigits))
-            numbers = extendNumbersToMaxLength(numbers);
+            numbers = extendArrayMemory(numbers);
 
         int[] number1 = numbers.get(0);
         int[] number2 = numbers.get(1);
