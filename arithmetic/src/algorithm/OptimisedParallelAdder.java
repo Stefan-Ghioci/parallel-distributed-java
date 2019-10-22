@@ -3,19 +3,20 @@ package algorithm;
 import structure.OptimisedAdderThread;
 import utils.Paths;
 
+import java.util.Arrays;
+
 import static utils.DataUtils.getElapsedTimeMilli;
-import static utils.DataUtils.initializeCarryFlags;
 import static utils.FileUtils.saveBigNumberToFile;
 
 public class OptimisedParallelAdder
 {
 
-    public static double run(Integer threadsCount, int[] number1, int[] number2)
+    public static double run(int threadsCount, byte[] number1, byte[] number2)
     {
         int maxLength = number1.length + 1;
 
-        int[] sum = new int[maxLength];
-        int[] carryFlags = initializeCarryFlags(threadsCount);
+        byte[] sum = new byte[maxLength];
+        byte[] carryFlags = setCarryFlags(threadsCount);
 
         Thread[] threads = createOptimisedAdderThreads(number1, number2, threadsCount, sum, carryFlags);
 
@@ -26,16 +27,16 @@ public class OptimisedParallelAdder
         long endTime = System.nanoTime();
         double elapsedTime = getElapsedTimeMilli(startTime, endTime);
 
-        saveBigNumberToFile(sum, Paths.PARALLEL_RESULT);
+        saveBigNumberToFile(sum, Paths.OPTIMISED_PARALLEL_RESULT);
 
         return elapsedTime;
     }
 
-    private static Thread[] createOptimisedAdderThreads(int[] number1,
-                                                        int[] number2,
-                                                        Integer threadsCount,
-                                                        int[] sum,
-                                                        int[] carryFlags)
+    private static Thread[] createOptimisedAdderThreads(byte[] number1,
+                                                        byte[] number2,
+                                                        int threadsCount,
+                                                        byte[] sum,
+                                                        byte[] carryFlags)
     {
         int length = number1.length;
         int intervalLength = length / threadsCount;
@@ -52,5 +53,21 @@ public class OptimisedParallelAdder
             threads[i] = new OptimisedAdderThread(i, number1, number2, sum, left, right, carryFlags);
         }
         return threads;
+    }
+
+    public static boolean isEmpty(byte[] carryFlags)
+    {
+        for (byte carryFlag : carryFlags)
+            if (carryFlag != 0)
+                return false;
+        return true;
+    }
+
+    private static byte[] setCarryFlags(int threadsCount)
+    {
+        byte[] carryFlags = new byte[threadsCount];
+        Arrays.fill(carryFlags, (byte) 2);
+
+        return carryFlags;
     }
 }

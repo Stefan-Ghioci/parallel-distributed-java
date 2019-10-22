@@ -30,7 +30,7 @@ public class FileUtils
         }
     }
 
-    public static List<int[]> getBigNumberListFromFile(String filename)
+    public static List<byte[]> getBigNumberListFromFile(String filename)
     {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename)))
         {
@@ -45,7 +45,7 @@ public class FileUtils
         return new ArrayList<>();
     }
 
-    public static void generateBigDataFile(String filename, Integer size, Integer min, Integer max)
+    public static void generateBigDataFile(String filename, int size, int min, int max)
     {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, Charset.defaultCharset(), false)))
         {
@@ -92,7 +92,7 @@ public class FileUtils
         return false;
     }
 
-    public static void saveBigNumberToFile(int[] sum, String filename)
+    public static void saveBigNumberToFile(byte[] sum, String filename)
     {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, Charset.defaultCharset(), false)))
         {
@@ -104,20 +104,23 @@ public class FileUtils
         }
     }
 
-    public static void saveResultsToCsv(String resultsFilename, Integer minDigits,
-                                        Integer maxDigits,
+    public static void saveResultsToCsv(String resultsFilename,
+                                        int minDigits,
+                                        int maxDigits,
                                         double sequentialTime,
                                         double parallelTime,
-                                        Integer threadsCount)
+                                        double optimisedParallelTime,
+                                        int threadsCount)
     {
         List<String> data = new ArrayList<>();
 
-        if (minDigits.equals(maxDigits))
+        if (minDigits == maxDigits)
             data.add(String.valueOf(minDigits));
         else
             data.add(minDigits + "-" + maxDigits);
         data.add(String.valueOf(sequentialTime));
         data.add(String.valueOf(parallelTime));
+        data.add(String.valueOf(optimisedParallelTime));
         data.add(String.valueOf(threadsCount));
 
         writeDataToCsvFile(resultsFilename, data);

@@ -1,24 +1,27 @@
 package structure;
 
-import java.util.Map;
-
 public class AdderThread extends Thread
 {
-    private int[] number1;
-    private int[] number2;
-    private int[] sum;
+    private int threadId;
+    private byte[] number1;
+    private byte[] number2;
+    private byte[] sum;
     private int left;
     private int right;
-    private Map<Integer, Integer> carryFlags;
+    private byte[] carryFlags;
     private Thread previousThread;
 
-    public AdderThread(int[] number1,
-                       int[] number2,
-                       int[] sum,
+    public AdderThread(int threadId,
+                       byte[] number1,
+                       byte[] number2,
+                       byte[] sum,
                        int left,
                        int right,
-                       Map<Integer, Integer> carryFlags, Thread previousThread)
+                       byte[] carryFlags,
+                       Thread previousThread)
     {
+        super();
+        this.threadId = threadId;
         this.number1 = number1;
         this.number2 = number2;
         this.sum = sum;
@@ -33,34 +36,42 @@ public class AdderThread extends Thread
     {
         try
         {
-            int carry = 0;
+            int digitSum;
+            byte carry = 0;
             for (int i = left; i < right; i++)
             {
-                int digitSum = number1[i] + number2[i] + carry;
-                sum[i] = digitSum % 10;
-                carry = digitSum / 10;
+                digitSum = number1[i] + number2[i] + carry;
+                sum[i] = (byte) (digitSum % 10);
+                carry = (byte) (digitSum / 10);
             }
+            carryFlags[threadId] = carry;
 
-            carryFlags.put(right, carry);
+            if (threadId == 0)
+                return;
 
-            previousThread.join();
+            if (carryFlags[threadId - 1] == 0)
+                previousThread.join();
 
-            carry = carryFlags.get(left);
+            carry = carryFlags[threadId - 1];
 
-            int i = left;
-            while (carry != 0)
+            if (carry != 0)
             {
-                int digitSum = sum[i] + carry;
-                sum[i] = digitSum % 10;
-                carry = digitSum / 10;
-                i++;
+                for (int i = left; i < right; i++)
+                {
+                    digitSum = sum[i] + carry;
+                    sum[i] = (byte) (digitSum % 10);
+                    carry = (byte) (digitSum / 10);
+
+                    if (carry == 0)
+                        break;
+                }
+                carryFlags[threadId] += carry;
             }
+
+            if (threadId + 1 == carryFlags.length)
+                sum[right] = carryFlags[threadId];
         }
-        catch (NullPointerException ignored)
-        {
-            // first thread will wait for null thread
-        }
-        catch (InterruptedException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }

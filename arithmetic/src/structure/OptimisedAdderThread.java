@@ -1,24 +1,25 @@
 package structure;
 
-import static utils.DataUtils.isEmpty;
+import static algorithm.OptimisedParallelAdder.isEmpty;
+import static utils.DataUtils.bigNumberToString;
 
 public class OptimisedAdderThread extends Thread
 {
     private int threadId;
-    private int[] number1;
-    private int[] number2;
+    private byte[] number1;
+    private byte[] number2;
     private int right;
     private int left;
-    private int[] sum;
-    private int[] carryFlags;
+    private byte[] sum;
+    private byte[] carryFlags;
 
     public OptimisedAdderThread(int threadId,
-                                int[] number1,
-                                int[] number2,
-                                int[] sum,
+                                byte[] number1,
+                                byte[] number2,
+                                byte[] sum,
                                 int left,
                                 int right,
-                                int[] carryFlags)
+                                byte[] carryFlags)
     {
         this.threadId = threadId;
         this.number1 = number1;
@@ -32,45 +33,50 @@ public class OptimisedAdderThread extends Thread
     @Override
     public void run()
     {
-        int carry = 0;
+        int digitSum;
+        byte carry = 0;
         for (int i = left; i < right; i++)
         {
-            int digitSum = number1[i] + number2[i] + carry;
-            sum[i] = digitSum % 10;
-            carry = digitSum / 10;
+            digitSum = number1[i] + number2[i] + carry;
+            sum[i] = (byte) (digitSum % 10);
+            carry = (byte) (digitSum / 10);
         }
 
-        passOverCarry(carry);
+        if (threadId != carryFlags.length - 1)
+            carryFlags[threadId] = carry;
+        else
+        {
+            carryFlags[threadId] = 0;
+            sum[right] = carry;
+        }
+
+        if (threadId == 0)
+            return;
 
         while (!isEmpty(carryFlags))
         {
-            if (carryFlags[threadId] == 1)
+            if (carryFlags[threadId - 1] == 1)
             {
-                carry = carryFlags[threadId];
+                carry = 1;
+                carryFlags[threadId - 1] = 0;
+
                 for (int i = left; i < right; i++)
                 {
-                    int digitSum = sum[i] + carry;
-                    sum[i] = digitSum % 10;
-                    carry = digitSum / 10;
+                    digitSum = sum[i] + carry;
+                    sum[i] = (byte) (digitSum % 10);
+                    carry = (byte) (digitSum / 10);
+
                     if (carry == 0)
                         break;
                 }
-                carryFlags[threadId] = 0;
-                passOverCarry(carry);
+
+                if (threadId != carryFlags.length - 1)
+                    carryFlags[threadId] += carry;
+                else
+                    sum[right] += carry;
             }
         }
     }
 
-    private void passOverCarry(int carry)
-    {
-        try
-        {
-            carryFlags[threadId + 1] = carry;
-        }
-        catch (IndexOutOfBoundsException ignored)
-        {
-            sum[right] = carry;
-        }
-    }
 
 }

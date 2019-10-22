@@ -1,6 +1,5 @@
 package algorithm;
 
-import utils.DataUtils;
 import utils.Paths;
 
 import static utils.DataUtils.getElapsedTimeMilli;
@@ -8,25 +7,26 @@ import static utils.FileUtils.saveBigNumberToFile;
 
 public class SequentialAdder
 {
-    static void compute(int[] number1, int[] number2, int[] sum)
+    private static void compute(byte[] number1, byte[] number2, byte[] sum)
     {
         int length = number1.length;
 
-        int carry = 0;
+        byte carry = 0;
+        int digitSum;
         for (int i = 0; i < length; i++)
         {
-            int digitSum = number1[i] + number2[i] + carry;
-            sum[i] = digitSum % 10;
-            carry = digitSum / 10;
+            digitSum = number1[i] + number2[i] + carry;
+            sum[i] = (byte) (digitSum % 10);
+            carry = (byte) (digitSum / 10);
         }
         if (carry != 0) sum[length] = carry;
 
     }
 
-    public static double run(int[] number1, int[] number2)
+    public static double run(byte[] number1, byte[] number2)
     {
         int maxLength = number1.length + 1;
-        int[] sum = new int[maxLength];
+        byte[] sum = new byte[maxLength];
 
         long startTime = System.nanoTime();
 

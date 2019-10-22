@@ -1,3 +1,4 @@
+import algorithm.OptimisedParallelAdder;
 import algorithm.ParallelAdder;
 import algorithm.SequentialAdder;
 import utils.Paths;
@@ -13,33 +14,50 @@ public class Start
 
     public static void main(String[] args)
     {
-        Integer threadsCount = Integer.valueOf(args[0]);
-        Integer minDigits = Integer.valueOf(args[1]);
-        Integer maxDigits = Integer.valueOf(args[2]);
+
+        int threadsCount = Integer.parseInt(args[0]);
+        int minDigits = Integer.parseInt(args[1]);
+        int maxDigits = Integer.parseInt(args[2]);
 
         generateBigDataFile(Paths.NUMBERS, 2, minDigits, maxDigits);
+        List<byte[]> numbers = getBigNumberListFromFile(Paths.NUMBERS);
 
-        generateBigDataFile(Paths.NUMBERS, 2, minDigits, maxDigits);
-        List<int[]> numbers = getBigNumberListFromFile(Paths.NUMBERS);
-
-        if (!minDigits.equals(maxDigits))
+        if (minDigits != maxDigits)
             numbers = extendArrayMemory(numbers);
 
-        int[] number1 = numbers.get(0);
-        int[] number2 = numbers.get(1);
+        byte[] number1 = numbers.get(0);
+        byte[] number2 = numbers.get(1);
 
         double sequentialTime = SequentialAdder.run(number1, number2);
         double parallelTime = ParallelAdder.run(threadsCount, number1, number2);
+        double optimisedParallelTime = OptimisedParallelAdder.run(threadsCount, number1, number2);
 
-        System.out.println("-------------------------------------");
-        System.out.println("Sequential Time: ");
-        System.out.println(sequentialTime + "ms");
-        System.out.println("Parallel Time: ");
-        System.out.println(parallelTime + "ms");
-        System.out.println("-------------------------------------");
+        if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT) &&
+                fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.OPTIMISED_PARALLEL_RESULT))
+        {
+            System.out.println("-------------------------------------");
+            System.out.println("Sequential Time: ");
+            System.out.println(sequentialTime + "ms");
 
-        if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT))
-            saveResultsToCsv(Paths.RESULTS, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
+            System.out.println("Parallel Time: ");
+            System.out.println(parallelTime + "ms");
+
+            System.out.println("Optimised Time: ");
+            System.out.println(optimisedParallelTime + "ms");
+            System.out.println("-------------------------------------");
+
+            saveResultsToCsv(Paths.RESULTS,
+                             minDigits,
+                             maxDigits,
+                             sequentialTime,
+                             parallelTime,
+                             optimisedParallelTime,
+                             threadsCount);
+        }
+        else
+        {
+            System.out.println("Results are not equal!!!");
+        }
     }
 
 }

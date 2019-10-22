@@ -9,14 +9,18 @@ import java.util.stream.IntStream;
 
 public class DataUtils
 {
-    static int[] stringToBigNumber(String string)
+    static byte[] stringToBigNumber(String string)
     {
-        return IntStream.range(0, string.length())
-                .map(i -> Character.getNumericValue(string.charAt(string.length() - i - 1)))
-                .toArray();
+        int length = string.length();
+        byte[] arr = new byte[length];
+        for (int i = 0; i < length; i++)
+        {
+            arr[i] = (byte) Character.getNumericValue(string.charAt(length - i - 1));
+        }
+        return arr;
     }
 
-    public static String bigNumberToString(int[] number)
+    public static String bigNumberToString(byte[] number)
     {
         String string = IntStream.iterate(number.length - 1, i -> i >= 0, i -> i - 1)
                 .mapToObj(i -> String.valueOf(number[i]))
@@ -49,7 +53,7 @@ public class DataUtils
         return line;
     }
 
-    public static List<int[]> extendArrayMemory(List<int[]> numbers)
+    public static List<byte[]> extendArrayMemory(List<byte[]> numbers)
     {
         int maxLength = Collections.max(numbers, (Comparator.comparing((number) -> number.length))).length;
 
@@ -63,19 +67,4 @@ public class DataUtils
         return (double) (endTime - startTime) / 1000000;
     }
 
-    public static boolean isEmpty(int[] carryFlags)
-    {
-        for (int carryFlag : carryFlags)
-            if (carryFlag != 0)
-                return false;
-        return true;
-    }
-
-    public static int[] initializeCarryFlags(int threadsCount)
-    {
-        int[] carryFlags = new int[threadsCount];
-        Arrays.fill(carryFlags, -1);
-        carryFlags[0] = 0;
-        return carryFlags;
-    }
 }
