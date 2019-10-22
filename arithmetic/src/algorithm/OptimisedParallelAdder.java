@@ -3,8 +3,7 @@ package algorithm;
 import structure.OptimisedAdderThread;
 import utils.Paths;
 
-import java.util.Arrays;
-
+import static algorithm.ParallelAdder.startAll;
 import static utils.DataUtils.getElapsedTimeMilli;
 import static utils.FileUtils.saveBigNumberToFile;
 
@@ -16,13 +15,13 @@ public class OptimisedParallelAdder
         int maxLength = number1.length + 1;
 
         byte[] sum = new byte[maxLength];
-        byte[] carryFlags = setCarryFlags(threadsCount);
+        byte[] carryFlags = new byte[threadsCount];
 
         Thread[] threads = createOptimisedAdderThreads(number1, number2, threadsCount, sum, carryFlags);
 
         long startTime = System.nanoTime();
 
-        ParallelAdder.compute(threads);
+        startAll(threads);
 
         long endTime = System.nanoTime();
         double elapsedTime = getElapsedTimeMilli(startTime, endTime);
@@ -34,7 +33,7 @@ public class OptimisedParallelAdder
 
     private static Thread[] createOptimisedAdderThreads(byte[] number1,
                                                         byte[] number2,
-                                                        int threadsCount,
+                                                        Integer threadsCount,
                                                         byte[] sum,
                                                         byte[] carryFlags)
     {
@@ -49,25 +48,11 @@ public class OptimisedParallelAdder
         {
             left = right;
             right = remainder > 0 ? left + intervalLength + 1 : left + intervalLength;
+            Thread previousThread = i == 0 ? null : threads[i - 1];
 
-            threads[i] = new OptimisedAdderThread(i, number1, number2, sum, left, right, carryFlags);
+            threads[i] = new OptimisedAdderThread(i, number1, number2, sum, left, right, carryFlags, previousThread);
         }
         return threads;
     }
 
-    public static boolean isEmpty(byte[] carryFlags)
-    {
-        for (byte carryFlag : carryFlags)
-            if (carryFlag != 0)
-                return false;
-        return true;
-    }
-
-    private static byte[] setCarryFlags(int threadsCount)
-    {
-        byte[] carryFlags = new byte[threadsCount];
-        Arrays.fill(carryFlags, (byte) 2);
-
-        return carryFlags;
-    }
 }
