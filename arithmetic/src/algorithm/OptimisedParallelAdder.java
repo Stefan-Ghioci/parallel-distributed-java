@@ -22,6 +22,7 @@ public class OptimisedParallelAdder
         long startTime = System.nanoTime();
 
         startAll(threads);
+        joinLast(threads);
 
         long endTime = System.nanoTime();
         double elapsedTime = getElapsedTimeMilli(startTime, endTime);
@@ -29,6 +30,18 @@ public class OptimisedParallelAdder
         saveBigNumberToFile(sum, Paths.OPTIMISED_PARALLEL_RESULT);
 
         return elapsedTime;
+    }
+
+    private static void joinLast(Thread[] threads)
+    {
+        try
+        {
+            threads[threads.length - 1].join();
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private static Thread[] createOptimisedAdderThreads(byte[] number1,

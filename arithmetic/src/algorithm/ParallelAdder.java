@@ -23,6 +23,8 @@ public class ParallelAdder
         long startTime = System.nanoTime();
 
         startAll(threads);
+        joinAll(threads);
+
         addLeftOvers(sum, carryFlags);
 
         long endTime = System.nanoTime();
@@ -75,6 +77,10 @@ public class ParallelAdder
     {
         for (Thread thread : threads) thread.start();
 
+    }
+
+    private static void joinAll(Thread[] threads)
+    {
         for (Thread thread : threads)
         {
             try
