@@ -7,7 +7,7 @@ import static utils.FileUtils.saveBigNumberToFile;
 
 public class SequentialAdder
 {
-    private static void compute(byte[] number1, byte[] number2, byte[] sum)
+    public static void compute(byte[] number1, byte[] number2, byte[] sum)
     {
         int length = number1.length;
 

@@ -9,4 +9,6 @@ public class Paths
     public static final String OPTIMISED_PARALLEL_RESULT = "out//optimised_parallel_sum.txt";
 
     public static final String RESULTS = "out//results.csv";
+    public static final String SEQUENTIAL_PRODUCT = "out//sequential_product.txt";
+    public static final String PARALLEL_PRODUCT = "out//parallel_product.txt";
 }

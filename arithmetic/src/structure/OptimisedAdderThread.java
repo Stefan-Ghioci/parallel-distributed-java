@@ -45,30 +45,34 @@ public class OptimisedAdderThread extends Thread
             }
             carryFlags[threadId] = carry;
 
-            if (threadId == 0)
-                return;
-
-            if (carryFlags[threadId - 1] == 0)
-                previousThread.join();
-
-            carry = carryFlags[threadId - 1];
-
-            if (carry != 0)
+            if (threadId != 0)
             {
-                for (int i = left; i < right; i++)
-                {
-                    digitSum = sum[i] + carry;
-                    sum[i] = (byte) (digitSum % 10);
-                    carry = (byte) (digitSum / 10);
 
-                    if (carry == 0)
-                        break;
+                if (carryFlags[threadId - 1] == 0)
+                    previousThread.join();
+
+                carry = carryFlags[threadId - 1];
+
+                if (carry != 0)
+                {
+                    for (int i = left; i < right; i++)
+                    {
+                        digitSum = sum[i] + carry;
+                        sum[i] = (byte) (digitSum % 10);
+                        carry = (byte) (digitSum / 10);
+
+                        if (carry == 0)
+                            break;
+                    }
+                    carryFlags[threadId] += carry;
                 }
-                carryFlags[threadId] += carry;
             }
 
-            if (threadId + 1 == carryFlags.length)
-                sum[right] = carryFlags[threadId];
+            byte carryFlag = carryFlags[threadId];
+            if (threadId + 1 == carryFlags.length && carryFlag != 0)
+            {
+                sum[right] = carryFlag;
+            }
         }
         catch (Exception e)
         {

@@ -79,7 +79,7 @@ public class ParallelAdder
 
     }
 
-    private static void joinAll(Thread[] threads)
+    static void joinAll(Thread[] threads)
     {
         for (Thread thread : threads)
         {

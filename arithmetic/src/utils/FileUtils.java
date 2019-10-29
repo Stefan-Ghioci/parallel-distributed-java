@@ -109,7 +109,6 @@ public class FileUtils
                                         int maxDigits,
                                         double sequentialTime,
                                         double parallelTime,
-                                        double optimisedParallelTime,
                                         int threadsCount)
     {
         List<String> data = new ArrayList<>();
@@ -120,7 +119,6 @@ public class FileUtils
             data.add(minDigits + "-" + maxDigits);
         data.add(String.valueOf(sequentialTime));
         data.add(String.valueOf(parallelTime));
-        data.add(String.valueOf(optimisedParallelTime));
         data.add(String.valueOf(threadsCount));
 
         writeDataToCsvFile(resultsFilename, data);

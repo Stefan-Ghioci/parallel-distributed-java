@@ -1,11 +1,9 @@
-import algorithm.OptimisedParallelAdder;
-import algorithm.ParallelAdder;
-import algorithm.SequentialAdder;
+import algorithm.ParallelMultiplier;
+import algorithm.SequentialMultiplier;
 import utils.Paths;
 
 import java.util.List;
 
-import static utils.DataUtils.extendArrayMemory;
 import static utils.FileUtils.*;
 
 
@@ -22,18 +20,13 @@ public class Start
         generateBigDataFile(Paths.NUMBERS, 2, minDigits, maxDigits);
         List<byte[]> numbers = getBigNumberListFromFile(Paths.NUMBERS);
 
-        if (minDigits != maxDigits)
-            numbers = extendArrayMemory(numbers);
-
         byte[] number1 = numbers.get(0);
         byte[] number2 = numbers.get(1);
 
-        double sequentialTime = SequentialAdder.run(number1, number2);
-        double parallelTime = ParallelAdder.run(threadsCount, number1, number2);
-        double optimisedParallelTime = OptimisedParallelAdder.run(threadsCount, number1, number2);
+        double sequentialTime = SequentialMultiplier.run(number1, number2);
+        double parallelTime = ParallelMultiplier.run(threadsCount, number1, number2);
 
-        if (fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.PARALLEL_RESULT) &&
-                fileContentsEqual(Paths.SEQUENTIAL_SUM, Paths.OPTIMISED_PARALLEL_RESULT))
+        if (fileContentsEqual(Paths.SEQUENTIAL_PRODUCT, Paths.PARALLEL_PRODUCT))
         {
             System.out.println("-------------------------------------");
             System.out.println("Sequential Time: ");
@@ -41,18 +34,9 @@ public class Start
 
             System.out.println("Parallel Time: ");
             System.out.println(parallelTime + "ms");
-
-            System.out.println("Optimised Time: ");
-            System.out.println(optimisedParallelTime + "ms");
             System.out.println("-------------------------------------");
 
-            saveResultsToCsv(Paths.RESULTS,
-                             minDigits,
-                             maxDigits,
-                             sequentialTime,
-                             parallelTime,
-                             optimisedParallelTime,
-                             threadsCount);
+            saveResultsToCsv(Paths.RESULTS, minDigits, maxDigits, sequentialTime, parallelTime, threadsCount);
         }
         else
         {
