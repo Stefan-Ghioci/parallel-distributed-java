@@ -24,7 +24,7 @@ public class Utils
             for (int i = 0; i < termsCount; i++)
             {
                 int degree = random.nextInt(maxDegree + 1);
-                int coefficient = random.nextInt((maxCoefficient - minCoefficient) + 1) + minCoefficient;
+                int coefficient = generateNonZeroNumber(minCoefficient, maxCoefficient, random);
 
                 writer.write(degree + " " + coefficient);
                 writer.newLine();
@@ -34,6 +34,14 @@ public class Utils
         {
             e.printStackTrace();
         }
+    }
+
+    private static int generateNonZeroNumber(Integer min, Integer max, Random random)
+    {
+        int x = 0;
+        while (x == 0)
+            x = random.nextInt((max - min) + 1) + min;
+        return x;
     }
 
     public static Queue<String> createRandomPolynomialFiles(int count,
