@@ -1,5 +1,9 @@
 package structure;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class TermSortedLinkedList
 {
     private Node<Term> root;
@@ -9,7 +13,7 @@ public class TermSortedLinkedList
     }
 
 
-    public synchronized void listSyncInsert(Term data)
+    synchronized void listSyncInsert(Term data)
     {
         if (root == null)
         {
@@ -84,6 +88,27 @@ public class TermSortedLinkedList
                 }
             }
         }
-
     }
+
+    public void writePolynomialToFile(String filename)
+    {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, false)))
+        {
+            Node<Term> current = root;
+
+            while (current.getNext() != null)
+            {
+                writer.write(current.getData().toString() + " + ");
+
+                current = current.getNext();
+            }
+
+            writer.write(current.getData().toString());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }
