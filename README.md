@@ -1,4 +1,4 @@
-# **PPD: Laborator 3_a - Java**
+# **PPD: Laborator 3a - Java**
 
 ## **Analiza cerințelor**
 
