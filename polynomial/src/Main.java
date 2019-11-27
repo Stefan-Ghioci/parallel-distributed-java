@@ -25,58 +25,68 @@ public class Main
 
         Queue<String> copy = new ConcurrentLinkedQueue<>(polynomialFilenames);
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
+        while (threadCount != 0)
         {
-            TermSortedLinkedList linkedList = new TermSortedLinkedList();
+            System.out.println("Thread count: " + threadCount);
+            ///////////////////////////////////////////////////////////////////////////////////////////
 
-            Thread[] threads = new Thread[threadCount];
+            {
+                polynomialFilenames = new ConcurrentLinkedQueue<>(copy);
 
-            for (int i = 0; i < threadCount; i++)
-                threads[i] = new ListSyncThread(polynomialFilenames, linkedList);
+                TermSortedLinkedList linkedList = new TermSortedLinkedList();
 
-            long startTime = System.nanoTime();
+                Thread[] threads = new Thread[threadCount];
 
-            for (Thread thread : threads)
-                thread.start();
-            for (Thread thread : threads)
-                thread.join();
+                for (int i = 0; i < threadCount; i++)
+                    threads[i] = new ListSyncThread(polynomialFilenames, linkedList);
 
-            long endTime = System.nanoTime();
-            double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
+                long startTime = System.nanoTime();
 
-            System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
+                for (Thread thread : threads)
+                    thread.start();
+                for (Thread thread : threads)
+                    thread.join();
 
-            linkedList.writePolynomialToFile("ListSync_result.txt");
-        }
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        {
-            polynomialFilenames = copy;
-            TermSortedLinkedList linkedList = new TermSortedLinkedList();
+                long endTime = System.nanoTime();
+                double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-            Thread[] threads = new Thread[threadCount];
+                System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
 
-            for (int i = 0; i < threadCount; i++)
-                threads[i] = new NodeSyncThread(polynomialFilenames, linkedList);
+                linkedList.writePolynomialToFile("ListSync_result.txt");
+            }
+            ///////////////////////////////////////////////////////////////////////////////////////////
+            {
+                polynomialFilenames = new ConcurrentLinkedQueue<>(copy);
+                TermSortedLinkedList linkedList = new TermSortedLinkedList();
 
-            long startTime = System.nanoTime();
+                Thread[] threads = new Thread[threadCount];
 
-            for (Thread thread : threads)
-                thread.start();
-            for (Thread thread : threads)
-                thread.join();
+                for (int i = 0; i < threadCount; i++)
+                    threads[i] = new NodeSyncThread(polynomialFilenames, linkedList);
 
-            long endTime = System.nanoTime();
-            double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
+                long startTime = System.nanoTime();
 
-            System.out.println("Node Sync Elapsed time: " + elapsedTime + "s");
+                for (Thread thread : threads)
+                {
+                    thread.start();
+                    Thread.sleep(100);
+                }
+                for (Thread thread : threads)
+                    thread.join();
 
-            linkedList.writePolynomialToFile("NodeSync_result.txt");
-        }
+                long endTime = System.nanoTime();
+                double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-        if (!Utils.contentEquals("ListSync_result.txt", "NodeSync_result.txt"))
-        {
-            System.out.println("Results are not the same!");
+                System.out.println("Node Sync Elapsed time: " + elapsedTime + "s");
+
+                linkedList.writePolynomialToFile("NodeSync_result.txt");
+            }
+
+            if (!Utils.contentEquals("ListSync_result.txt", "NodeSync_result.txt"))
+            {
+                System.out.println("Results are not the same!");
+            }
+            threadCount /= 2;
         }
     }
 
