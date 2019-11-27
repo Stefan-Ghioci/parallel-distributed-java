@@ -92,11 +92,14 @@ public class TermSortedLinkedList
     {
         //System.out.println("Thread " + Thread.currentThread().getId() + " - inserting " + data);
 
-        if (root == null)
+        synchronized (this)
         {
-            root = new Node<>(data, null);
-            //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted as new root. ");
-            return;
+            if (root == null)
+            {
+                root = new Node<>(data, null);
+                //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted as new root. ");
+                return;
+            }
         }
 
         synchronized (root)
@@ -138,58 +141,56 @@ public class TermSortedLinkedList
         {
             synchronized (previous)
             {
-                try
-                {
-                    synchronized (current)
-                    {
-
-
-                        int dataCompareResult = current.getData().compareTo(data);
-
-                        if (dataCompareResult < 0)
-                        {
-                            current = new Node<>(data, current);
-                            previous.setNext(current);
-                            //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted after " + previous.getData() + " and behind " + current.getNext().getData());
-                            return;
-                        }
-
-                        if (dataCompareResult == 0)
-                        {
-                            Term nextData = current.getData();
-                            int coefficientSum = nextData.getCoefficient() + data.getCoefficient();
-
-                            if (coefficientSum == 0)
-                            {
-                                previous.setNext(current.getNext());
-                                //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " deleted " + current.getData());
-
-                                return;
-                            }
-
-                            //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " added to " + current.getData());
-
-                            nextData.setCoefficient(coefficientSum);
-                            current.setData(nextData);
-
-                            return;
-
-                        }
-
-                        previous = current;
-                        current = current.getNext();
-                    }
-                }
-                catch (NullPointerException currentNull)
+                if (previous.getNext() == null)
                 {
                     previous.setNext(new Node<>(data, null));
                     //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted after " + previous.getData());
                     return;
                 }
 
+                synchronized (current)
+                {
+                    int dataCompareResult = current.getData().compareTo(data);
+
+                    if (dataCompareResult < 0)
+                    {
+                        current = new Node<>(data, current);
+                        previous.setNext(current);
+                        //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted after " + previous.getData() + " and behind " + current.getNext().getData());
+                        return;
+                    }
+
+                    if (dataCompareResult == 0)
+                    {
+                        Term nextData = current.getData();
+                        int coefficientSum = nextData.getCoefficient() + data.getCoefficient();
+
+                        if (coefficientSum == 0)
+                        {
+                            previous.setNext(current.getNext());
+                            //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " deleted " + current.getData());
+
+                            return;
+                        }
+
+                        //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " added to " + current.getData());
+
+                        nextData.setCoefficient(coefficientSum);
+                        current.setData(nextData);
+
+                        return;
+
+                    }
+
+                    previous = current;
+                    current = current.getNext();
+                }
+
+
             }
 
         }
+
     }
 
 
