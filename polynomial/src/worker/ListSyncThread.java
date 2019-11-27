@@ -1,4 +1,7 @@
-package structure;
+package worker;
+
+import structure.Term;
+import structure.TermSortedLinkedList;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,12 +9,12 @@ import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-public class AdderThread extends Thread
+public class ListSyncThread extends Thread
 {
     private final TermSortedLinkedList linkedList;
     private final Queue<String> polynomialFilenames;
 
-    public AdderThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
+    public ListSyncThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
     {
         this.polynomialFilenames = polynomialFilenames;
         this.linkedList = linkedList;

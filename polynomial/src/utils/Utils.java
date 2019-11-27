@@ -3,6 +3,8 @@ package utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -51,7 +53,7 @@ public class Utils
                                                             Integer maxCoefficient)
     {
         Queue<String> filenames = new ConcurrentLinkedQueue<>();
-        String root = "polynomial";
+        String root = "generated/polynomial";
 
         for (int i = 0; i < count; i++)
         {
@@ -67,5 +69,22 @@ public class Utils
     public static double getElapsedTimeMilli(long startTime, long endTime)
     {
         return (double) (endTime - startTime) / 1000000;
+    }
+
+    public static boolean contentEquals(String filename1, String filename2)
+    {
+        try
+        {
+            String text1 = Files.readString(Paths.get(filename1));
+            String text2 = Files.readString(Paths.get(filename2));
+
+            return text1.equals(text2);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

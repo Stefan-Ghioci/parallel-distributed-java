@@ -1,8 +1,10 @@
-import structure.AdderThread;
 import structure.TermSortedLinkedList;
 import utils.Utils;
+import worker.ListSyncThread;
+import worker.NodeSyncThread;
 
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Main
 {
@@ -21,25 +23,61 @@ public class Main
                                                                               minCoefficient,
                                                                               maxCoefficient);
 
-        TermSortedLinkedList linkedList = new TermSortedLinkedList();
+        Queue<String> copy = new ConcurrentLinkedQueue<>(polynomialFilenames);
 
-        Thread[] threads = new Thread[threadCount];
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
-        for (int i = 0; i < threadCount; i++)
-            threads[i] = new AdderThread(polynomialFilenames, linkedList);
+        {
+            TermSortedLinkedList linkedList = new TermSortedLinkedList();
 
-        long startTime = System.nanoTime();
+            Thread[] threads = new Thread[threadCount];
 
-        for (Thread thread : threads)
-            thread.start();
-        for (Thread thread : threads)
-            thread.join();
+            for (int i = 0; i < threadCount; i++)
+                threads[i] = new ListSyncThread(polynomialFilenames, linkedList);
 
-        long endTime = System.nanoTime();
-        double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
+            long startTime = System.nanoTime();
 
-        System.out.println("Elapsed time: " + elapsedTime);
-        linkedList.writePolynomialToFile("result.txt");
+            for (Thread thread : threads)
+                thread.start();
+            for (Thread thread : threads)
+                thread.join();
+
+            long endTime = System.nanoTime();
+            double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
+
+            System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
+
+            linkedList.writePolynomialToFile("ListSync_result.txt");
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        {
+            polynomialFilenames = copy;
+            TermSortedLinkedList linkedList = new TermSortedLinkedList();
+
+            Thread[] threads = new Thread[threadCount];
+
+            for (int i = 0; i < threadCount; i++)
+                threads[i] = new NodeSyncThread(polynomialFilenames, linkedList);
+
+            long startTime = System.nanoTime();
+
+            for (Thread thread : threads)
+                thread.start();
+            for (Thread thread : threads)
+                thread.join();
+
+            long endTime = System.nanoTime();
+            double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
+
+            System.out.println("Node Sync Elapsed time: " + elapsedTime + "ms");
+
+            linkedList.writePolynomialToFile("NodeSync_result.txt");
+        }
+
+        if (!Utils.contentEquals("ListSync_result.txt", "NodeSync_result.txt"))
+        {
+            System.out.println("Results are not the same!");
+        }
     }
 
 }
