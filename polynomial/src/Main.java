@@ -45,7 +45,7 @@ public class Main
             long endTime = System.nanoTime();
             double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
 
-            System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
+            System.out.println("List Sync Elapsed time: " + elapsedTime + "ms");
 
             linkedList.writePolynomialToFile("ListSync_result.txt");
         }
