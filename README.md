@@ -53,9 +53,9 @@ Se generează fișiere cu polinoame în funcție de parametrii dați la intrare 
 
 2. Varianta B - sincronizare la nivel de noduri
     1. se urmează aceiași pași ca la varianta A, dar se vor sincroniza următorii pași
-        1. sincronizare pe nodul **rădăcină** la pașii **1.1 - 1.2** (dacă rădăcina este **null**, se va face sincronizare pe tot obiectul)
-        2. sincronizare pe nodul **precedent** la pașii **1.3 - 1.6**
-        3. sincronizare pe nodul **curent** la pașii **1.4 - 1.6**
+        1. sincronizare pe nodul **rădăcină** la pașii **i - ii** (dacă rădăcina este **null**, se va face sincronizare pe tot obiectul)
+        2. sincronizare pe nodul **precedent** la pașii **iii - vi**
+        3. sincronizare pe nodul **curent** la pașii **iv - vi**
 
 ### **Optimizare**
 
