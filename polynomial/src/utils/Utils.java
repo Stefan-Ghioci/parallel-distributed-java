@@ -66,9 +66,9 @@ public class Utils
         return filenames;
     }
 
-    public static double getElapsedTimeMilli(long startTime, long endTime)
+    public static double getElapsedTimeSeconds(long startTime, long endTime)
     {
-        return (double) (endTime - startTime) / 1000000;
+        return (double) (endTime - startTime) / 1000000000;
     }
 
     public static boolean contentEquals(String filename1, String filename2)

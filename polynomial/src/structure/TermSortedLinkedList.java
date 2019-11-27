@@ -90,17 +90,15 @@ public class TermSortedLinkedList
 
     public void nodeSyncInsert(Term data)
     {
-        //System.out.println("Thread " + Thread.currentThread().getId() + " - inserting " + data);
-
-        synchronized (this)
-        {
-            if (root == null)
+        if (root == null)
+            synchronized (this)
             {
-                root = new Node<>(data, null);
-                //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted as new root. ");
-                return;
+                if (root == null)
+                {
+                    root = new Node<>(data, null);
+                    return;
+                }
             }
-        }
 
         synchronized (root)
         {
@@ -109,7 +107,6 @@ public class TermSortedLinkedList
             if (dataCompareResult < 0)
             {
                 root = new Node<>(data, root);
-                //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted behind root. ");
                 return;
             }
 
@@ -121,21 +118,17 @@ public class TermSortedLinkedList
                 if (coefficientSum == 0)
                 {
                     root = root.getNext();
-                    //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " deleted root. ");
                     return;
                 }
 
                 rootData.setCoefficient(coefficientSum);
                 root.setData(rootData);
-                //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " added to root. ");
-
                 return;
             }
         }
 
 
         Node<Term> previous = root;
-        Node<Term> current = root.getNext();
 
         while (true)
         {
@@ -144,9 +137,10 @@ public class TermSortedLinkedList
                 if (previous.getNext() == null)
                 {
                     previous.setNext(new Node<>(data, null));
-                    //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted after " + previous.getData());
                     return;
                 }
+
+                Node<Term> current = previous.getNext();
 
                 synchronized (current)
                 {
@@ -156,7 +150,6 @@ public class TermSortedLinkedList
                     {
                         current = new Node<>(data, current);
                         previous.setNext(current);
-                        //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " inserted after " + previous.getData() + " and behind " + current.getNext().getData());
                         return;
                     }
 
@@ -168,12 +161,8 @@ public class TermSortedLinkedList
                         if (coefficientSum == 0)
                         {
                             previous.setNext(current.getNext());
-                            //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " deleted " + current.getData());
-
                             return;
                         }
-
-                        //System.out.println("Thread " + Thread.currentThread().getId() + " - " + data + " added to " + current.getData());
 
                         nextData.setCoefficient(coefficientSum);
                         current.setData(nextData);
@@ -183,7 +172,6 @@ public class TermSortedLinkedList
                     }
 
                     previous = current;
-                    current = current.getNext();
                 }
 
 

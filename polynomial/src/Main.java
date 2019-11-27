@@ -43,9 +43,9 @@ public class Main
                 thread.join();
 
             long endTime = System.nanoTime();
-            double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
+            double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-            System.out.println("List Sync Elapsed time: " + elapsedTime + "ms");
+            System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
 
             linkedList.writePolynomialToFile("ListSync_result.txt");
         }
@@ -67,9 +67,9 @@ public class Main
                 thread.join();
 
             long endTime = System.nanoTime();
-            double elapsedTime = Utils.getElapsedTimeMilli(startTime, endTime);
+            double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-            System.out.println("Node Sync Elapsed time: " + elapsedTime + "ms");
+            System.out.println("Node Sync Elapsed time: " + elapsedTime + "s");
 
             linkedList.writePolynomialToFile("NodeSync_result.txt");
         }
