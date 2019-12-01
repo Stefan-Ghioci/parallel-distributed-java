@@ -49,8 +49,4 @@ public class MyConcurrentLinkedQueue<T extends Comparable<T>>
         return size;
     }
 
-    public boolean isEmpty()
-    {
-        return size() == 0;
-    }
 }

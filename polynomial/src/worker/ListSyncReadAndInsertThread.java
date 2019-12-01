@@ -9,12 +9,12 @@ import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-public class NodeSyncThread extends Thread
+public class ListSyncReadAndInsertThread extends Thread
 {
     private final TermSortedLinkedList linkedList;
     private final Queue<String> polynomialFilenames;
 
-    public NodeSyncThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
+    public ListSyncReadAndInsertThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
     {
         this.polynomialFilenames = polynomialFilenames;
         this.linkedList = linkedList;
@@ -35,7 +35,7 @@ public class NodeSyncThread extends Thread
                     Integer degree = Integer.valueOf(split[0]);
                     Integer coefficient = Integer.valueOf(split[1]);
 
-                    linkedList.nodeSyncInsert(new Term(degree, coefficient));
+                    linkedList.listSyncInsert(new Term(degree, coefficient));
                 });
             }
             catch (IOException e)
