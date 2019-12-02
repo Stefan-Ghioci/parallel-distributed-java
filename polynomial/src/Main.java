@@ -1,23 +1,27 @@
+import structure.MyConcurrentLinkedQueue;
+import structure.Term;
 import structure.TermSortedLinkedList;
 import utils.Utils;
-import worker.ListSyncReadAndInsertThread;
-import worker.NodeSyncReadAndInsertThread;
+import worker.ReadOnlyThread;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.IntStream;
 
 public class Main
 {
     public static void main(String[] args) throws InterruptedException
     {
         int threadCount = Integer.parseInt(args[0]);
-        int count = Integer.parseInt(args[1]);
+        int polynomialsCount = Integer.parseInt(args[1]);
         int maxTermsCount = Integer.parseInt(args[2]);
         int maxDegree = Integer.parseInt(args[3]);
         int minCoefficient = Integer.parseInt(args[4]);
         int maxCoefficient = Integer.parseInt(args[5]);
 
-        Queue<String> filenames = Utils.createRandomPolynomialFiles(count,
+        Queue<String> filenames = Utils.createRandomPolynomialFiles(polynomialsCount,
                                                                     maxTermsCount,
                                                                     maxDegree,
                                                                     minCoefficient,
@@ -32,31 +36,83 @@ public class Main
 
             runNodeSyncAllReadAndInsert(threadCount, new ConcurrentLinkedQueue<>(filenames));
 
-            runListSyncFirstReadsRestInsert(threadCount, new ConcurrentLinkedQueue<>(filenames));
+            runListSyncFirstReadsRestInsert(threadCount, new ArrayList<>(filenames));
 
-            if (!Utils.contentEquals("ListSync_result.txt", "NodeSync_result.txt"))
-            {
-                System.out.println("Results are not the same!");
-            }
+            runNodeSyncFirstReadsRestInsert(threadCount, new ArrayList<>(filenames));
 
             threadCount /= 2;
         }
     }
 
-    private static void runListSyncFirstReadsRestInsert(int threadCount, Queue<String> filenames)
+    private static void runNodeSyncFirstReadsRestInsert(int threadCount, ArrayList<String> filenames)throws
+            InterruptedException
     {
-        //TODO
+        TermSortedLinkedList linkedList = new TermSortedLinkedList();
+        MyConcurrentLinkedQueue<Term> termQueue = new MyConcurrentLinkedQueue<>();
+
+        Thread readThread = new ReadOnlyThread(filenames, termQueue);
+        Thread[] insertThreads = IntStream.range(0, threadCount - 1)
+                .mapToObj(i -> new worker.node_sync.InsertOnlyThread(readThread, linkedList, termQueue))
+                .toArray(Thread[]::new);
+
+        long startTime = System.nanoTime();
+
+        readThread.start();
+
+        for (Thread insertThread : insertThreads)
+            insertThread.start();
+
+        for (Thread insertThread : insertThreads)
+            insertThread.join();
+
+        long endTime = System.nanoTime();
+        double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
+
+
+        System.out.println("Node Sync (First Reads, Rest Insert) - Elapsed time\t: " + elapsedTime + "s");
+
+        linkedList.writePolynomialToFile("NodeSync_FirstReadsRestInsert_result.txt");
     }
 
-    private static void runNodeSyncAllReadAndInsert(int threadCount, Queue<String> filenames) throws InterruptedException
+    private static void runListSyncFirstReadsRestInsert(int threadCount, List<String> filenames) throws
+            InterruptedException
+    {
+        TermSortedLinkedList linkedList = new TermSortedLinkedList();
+        MyConcurrentLinkedQueue<Term> termQueue = new MyConcurrentLinkedQueue<>();
+
+        Thread readThread = new ReadOnlyThread(filenames, termQueue);
+        Thread[] insertThreads = IntStream.range(0, threadCount - 1)
+                .mapToObj(i -> new worker.list_sync.InsertOnlyThread(readThread, linkedList, termQueue))
+                .toArray(Thread[]::new);
+
+        long startTime = System.nanoTime();
+
+        readThread.start();
+
+        for (Thread insertThread : insertThreads)
+            insertThread.start();
+
+        for (Thread insertThread : insertThreads)
+            insertThread.join();
+
+        long endTime = System.nanoTime();
+        double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
+
+
+        System.out.println("List Sync (First Reads, Rest Insert) - Elapsed time\t: " + elapsedTime + "s");
+
+        linkedList.writePolynomialToFile("ListSync_FirstReadsRestInsert_result.txt");
+    }
+
+    private static void runNodeSyncAllReadAndInsert(int threadCount, Queue<String> filenames) throws
+            InterruptedException
     {
 
         TermSortedLinkedList linkedList = new TermSortedLinkedList();
 
-        Thread[] threads = new Thread[threadCount];
-
-        for (int i = 0; i < threadCount; i++)
-            threads[i] = new NodeSyncReadAndInsertThread(filenames, linkedList);
+        Thread[] threads = IntStream.range(0, threadCount)
+                .mapToObj(i -> new worker.node_sync.ReadAndInsertThread(filenames, linkedList))
+                .toArray(Thread[]::new);
 
         long startTime = System.nanoTime();
 
@@ -71,12 +127,13 @@ public class Main
         long endTime = System.nanoTime();
         double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-        System.out.println("Node Sync Elapsed time: " + elapsedTime + "s");
+        System.out.println("Node Sync (All Read and Insert) - Elapsed time\t\t: " + elapsedTime + "s");
 
-        linkedList.writePolynomialToFile("NodeSync_result.txt");
+        linkedList.writePolynomialToFile("NodeSync_AllReadAndInsert_result.txt");
     }
 
-    private static void runListSyncAllReadAndInsert(int threadCount, Queue<String> filenames) throws InterruptedException
+    private static void runListSyncAllReadAndInsert(int threadCount, Queue<String> filenames) throws
+            InterruptedException
     {
 
         TermSortedLinkedList linkedList = new TermSortedLinkedList();
@@ -84,7 +141,7 @@ public class Main
         Thread[] threads = new Thread[threadCount];
 
         for (int i = 0; i < threadCount; i++)
-            threads[i] = new ListSyncReadAndInsertThread(filenames, linkedList);
+            threads[i] = new worker.list_sync.ReadAndInsertThread(filenames, linkedList);
 
         long startTime = System.nanoTime();
 
@@ -96,9 +153,9 @@ public class Main
         long endTime = System.nanoTime();
         double elapsedTime = Utils.getElapsedTimeSeconds(startTime, endTime);
 
-        System.out.println("List Sync Elapsed time: " + elapsedTime + "s");
+        System.out.println("List Sync (All Read and Insert) - Elapsed time\t\t: " + elapsedTime + "s");
 
-        linkedList.writePolynomialToFile("ListSync_result.txt");
+        linkedList.writePolynomialToFile("ListSync_AllReadAndInsert_result.txt");
     }
 
 }

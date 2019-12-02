@@ -49,4 +49,9 @@ public class MyConcurrentLinkedQueue<T extends Comparable<T>>
         return size;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isEmpty()
+    {
+        return size() == 0;
+    }
 }

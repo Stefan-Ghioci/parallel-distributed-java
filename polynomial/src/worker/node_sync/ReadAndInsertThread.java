@@ -1,4 +1,4 @@
-package worker;
+package worker.node_sync;
 
 import structure.Term;
 import structure.TermSortedLinkedList;
@@ -9,12 +9,12 @@ import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-public class NodeSyncReadAndInsertThread extends Thread
+public class ReadAndInsertThread extends Thread
 {
     private final TermSortedLinkedList linkedList;
     private final Queue<String> polynomialFilenames;
 
-    public NodeSyncReadAndInsertThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
+    public ReadAndInsertThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
     {
         this.polynomialFilenames = polynomialFilenames;
         this.linkedList = linkedList;
