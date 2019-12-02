@@ -44,7 +44,7 @@ public class Main
         }
     }
 
-    private static void runNodeSyncFirstReadsRestInsert(int threadCount, ArrayList<String> filenames)throws
+    private static void runNodeSyncFirstReadsRestInsert(int threadCount, List<String> filenames) throws
             InterruptedException
     {
         TermSortedLinkedList linkedList = new TermSortedLinkedList();
@@ -59,8 +59,11 @@ public class Main
 
         readThread.start();
 
-        for (Thread insertThread : insertThreads)
-            insertThread.start();
+        for (Thread thread : insertThreads)
+        {
+            thread.start();
+            Thread.sleep(100);
+        }
 
         for (Thread insertThread : insertThreads)
             insertThread.join();
