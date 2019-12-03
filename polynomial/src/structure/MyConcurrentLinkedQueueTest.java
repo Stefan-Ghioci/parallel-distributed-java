@@ -93,4 +93,19 @@ class MyConcurrentLinkedQueueTest
 
         assertEquals(elementsCount, total);
     }
+
+    @Test
+    void copyConstructor()
+    {
+        int count = 10;
+        for (int i = 0; i < count; i++)
+            queue.add(i);
+
+        MyConcurrentLinkedQueue<Integer> copy = new MyConcurrentLinkedQueue<>(queue);
+
+        for (int i = 0; i < count; i++)
+        {
+            assertEquals(queue.poll(),copy.poll());
+        }
+    }
 }

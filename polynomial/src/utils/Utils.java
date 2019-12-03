@@ -1,10 +1,13 @@
 package utils;
 
+import structure.MyConcurrentLinkedQueue;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -46,13 +49,13 @@ public class Utils
         return x;
     }
 
-    public static Queue<String> createRandomPolynomialFiles(int count,
-                                                            Integer maxTermsCount,
-                                                            Integer maxDegree,
-                                                            Integer minCoefficient,
-                                                            Integer maxCoefficient)
+    public static MyConcurrentLinkedQueue<String> createRandomPolynomialFiles(int count,
+                                                                              Integer maxTermsCount,
+                                                                              Integer maxDegree,
+                                                                              Integer minCoefficient,
+                                                                              Integer maxCoefficient)
     {
-        Queue<String> filenames = new ConcurrentLinkedQueue<>();
+        MyConcurrentLinkedQueue<String> filenames = new MyConcurrentLinkedQueue<>();
         String root = "generated/polynomial";
 
         for (int i = 0; i < count; i++)
@@ -86,5 +89,10 @@ public class Utils
         }
 
         return false;
+    }
+
+    public static boolean anyAlive(Thread[] readThreads)
+    {
+        return Arrays.stream(readThreads).anyMatch(Thread::isAlive);
     }
 }

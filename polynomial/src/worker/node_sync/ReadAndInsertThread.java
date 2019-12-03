@@ -1,5 +1,6 @@
 package worker.node_sync;
 
+import structure.MyConcurrentLinkedQueue;
 import structure.Term;
 import structure.TermSortedLinkedList;
 
@@ -12,9 +13,9 @@ import java.util.stream.Stream;
 public class ReadAndInsertThread extends Thread
 {
     private final TermSortedLinkedList linkedList;
-    private final Queue<String> polynomialFilenames;
+    private final MyConcurrentLinkedQueue<String> polynomialFilenames;
 
-    public ReadAndInsertThread(Queue<String> polynomialFilenames, TermSortedLinkedList linkedList)
+    public ReadAndInsertThread(MyConcurrentLinkedQueue<String> polynomialFilenames, TermSortedLinkedList linkedList)
     {
         this.polynomialFilenames = polynomialFilenames;
         this.linkedList = linkedList;

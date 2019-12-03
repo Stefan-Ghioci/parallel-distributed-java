@@ -11,10 +11,10 @@ import java.util.stream.Stream;
 
 public class ReadOnlyThread extends Thread
 {
-    private final List<String> filenames;
+    private final MyConcurrentLinkedQueue<String> filenames;
     private final MyConcurrentLinkedQueue<Term> termQueue;
 
-    public ReadOnlyThread(List<String> filenames, MyConcurrentLinkedQueue<Term> termQueue)
+    public ReadOnlyThread(MyConcurrentLinkedQueue<String> filenames, MyConcurrentLinkedQueue<Term> termQueue)
     {
         this.filenames = filenames;
         this.termQueue = termQueue;
@@ -23,7 +23,8 @@ public class ReadOnlyThread extends Thread
     @Override
     public void run()
     {
-        for (String filename : filenames)
+        String filename = filenames.poll();
+        while (filename != null)
         {
             try (Stream<String> stream = Files.lines(Paths.get(filename)))
             {
@@ -33,7 +34,6 @@ public class ReadOnlyThread extends Thread
                     Integer coefficient = Integer.valueOf(line.split(" ")[1]);
 
                     Term term = new Term(degree, coefficient);
-//                    System.out.println("Thread(" + currentThread().getId() + ") queueing " + term);
                     termQueue.add(term);
                 });
             }
@@ -41,7 +41,7 @@ public class ReadOnlyThread extends Thread
             {
                 e.printStackTrace();
             }
+            filename = filenames.poll();
         }
-//        System.out.println("Thread(" + currentThread().getId() + ") finished.");
     }
 }

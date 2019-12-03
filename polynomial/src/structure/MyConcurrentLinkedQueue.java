@@ -12,6 +12,32 @@ public class MyConcurrentLinkedQueue<T extends Comparable<T>>
         head = tail = null;
     }
 
+    public MyConcurrentLinkedQueue(MyConcurrentLinkedQueue<T> original)
+    {
+        this.size = original.size;
+
+        if (original.head == null)
+        {
+            this.head = this.tail = null;
+        }
+        else
+        {
+            this.head = new Node<>(original.head.getData(), null);
+
+            Node<T> current = this.head;
+            Node<T> originalCurrent = original.head;
+
+            while (originalCurrent.getNext() != null)
+            {
+                originalCurrent = originalCurrent.getNext();
+                current.setNext(new Node<>(originalCurrent.getData(), null));
+                current = current.getNext();
+            }
+
+            this.tail = current;
+        }
+    }
+
     public synchronized void add(T data)
     {
         Node<T> node = new Node<>(data, null);
