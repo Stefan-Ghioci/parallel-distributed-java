@@ -74,23 +74,6 @@ public class Utils
         return (double) (endTime - startTime) / 1000000000;
     }
 
-    public static boolean contentEquals(String filename1, String filename2)
-    {
-        try
-        {
-            String text1 = Files.readString(Paths.get(filename1));
-            String text2 = Files.readString(Paths.get(filename2));
-
-            return text1.equals(text2);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
     public static boolean anyAlive(Thread[] readThreads)
     {
         return Arrays.stream(readThreads).anyMatch(Thread::isAlive);
