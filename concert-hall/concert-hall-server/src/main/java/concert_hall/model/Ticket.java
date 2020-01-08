@@ -1,9 +1,10 @@
 package concert_hall.model;
 
-import concert_hall.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Ticket implements BaseEntity<ThreeKeyTuple<Integer>> {
     private Integer seatID;
     private Integer showID;
@@ -11,11 +12,7 @@ public class Ticket implements BaseEntity<ThreeKeyTuple<Integer>> {
 
     @Override
     public ThreeKeyTuple<Integer> getId() {
-        ThreeKeyTuple<Integer> keyTuple = new ThreeKeyTuple<>();
-        keyTuple.setKey1(seatID);
-        keyTuple.setKey2(showID);
-        keyTuple.setKey3(saleID);
-        return keyTuple;
+        return new ThreeKeyTuple<>(seatID,showID,saleID);
     }
 
     @Override

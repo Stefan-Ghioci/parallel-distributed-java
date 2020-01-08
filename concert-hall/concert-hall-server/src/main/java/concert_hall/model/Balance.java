@@ -1,9 +1,10 @@
 package concert_hall.model;
 
-import concert_hall.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Balance implements BaseEntity<Double> {
     private Double amount;
 

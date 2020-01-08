@@ -1,35 +1,46 @@
 package concert_hall;
 
+import concert_hall.model.BaseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public class Repository<T extends BaseEntity<ID>, ID> {
 
-    File fileStorage;
-    Map<ID, T> localStorage;
+    private final static Logger logger = LoggerFactory.getLogger(Repository.class);
+    private final String entityName;
 
-    public Repository(String pathname) {
-        System.out.println("Initializing repository from file " + pathname + " ...");
-        fileStorage = new File(pathname);
+    private File fileDatabase;
+    private Map<ID, T> localDatabase;
+
+    public Repository(String entityName) {
+        this.entityName = entityName;
+        logger.info("Initializing data from " + entityName + " database ...");
+        fileDatabase = new File("concert-hall-server\\database\\" + entityName + ".dat");
 
         loadFromFile();
     }
 
     private void loadFromFile() {
-        localStorage = new HashMap<>();
+        localDatabase = new HashMap<>();
         try {
-            fileStorage.createNewFile();
-            ObjectInputStream stream = new ObjectInputStream(new FileInputStream(fileStorage));
+            //noinspection ResultOfMethodCallIgnored
+            fileDatabase.createNewFile();
             try {
+
+                ObjectInputStream stream = new ObjectInputStream(new FileInputStream(fileDatabase));
+                //noinspection InfiniteLoopStatement
                 while (true) {
+                    @SuppressWarnings("unchecked")
                     T element = (T) stream.readObject();
-                    localStorage.put(element.getId(), element);
+                    localDatabase.put(element.getId(), element);
                 }
             } catch (EOFException ignored) {
-                localStorage.forEach((id, t) -> System.out.println("{Key=" + t.getId() + ", Value=" + t + "}"));
-                System.out.println(localStorage.size() + " items loaded");
+                logger.info(localDatabase.size() + " items of type " + entityName + " loaded");
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -38,15 +49,15 @@ public class Repository<T extends BaseEntity<ID>, ID> {
 
     private void saveToFile() {
         try {
-            ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(fileStorage, false));
-            localStorage.forEach((id, element) -> {
+            ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(fileDatabase, false));
+            localDatabase.forEach((id, element) -> {
                 try {
                     stream.writeObject(element);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-            System.out.println("Storage updated");
+            logger.info(entityName + " database updated");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,35 +65,43 @@ public class Repository<T extends BaseEntity<ID>, ID> {
     }
 
     public void save(T t) {
-        if (!localStorage.containsKey(t.getId())) {
-            localStorage.put(t.getId(), t);
+        if (!localDatabase.containsKey(t.getId())) {
+            localDatabase.put(t.getId(), t);
+            logger.info(t + " saved");
             saveToFile();
         }
+        logger.info(t + " not saved, already existing entity with id " + t.getId());
     }
 
     public T findById(ID id) {
-        return localStorage.get(id);
+        return localDatabase.get(id);
     }
 
-    public boolean existsById(ID id) {
-        return localStorage.get(id) != null;
+//    public boolean existsById(ID id) {
+//        return localDatabase.get(id) != null;
+//    }
+
+    public Collection<T> findAll() {
+        return localDatabase.values();
     }
 
-    public Iterable<T> findAll() {
-        return localStorage.values();
-    }
-
-    public long count() {
-        return localStorage.size();
+    public Integer count() {
+        return localDatabase.size();
     }
 
     public void deleteById(ID id) {
-        localStorage.remove(id);
+        localDatabase.remove(id);
         saveToFile();
     }
 
-    public void update(T t) {
-        deleteById(t.getId());
-        save(t);
-    }
+//    public void update(T t) {
+//        if (existsById(t.getId())) {
+//            deleteById(t.getId());
+//            save(t);
+//            logger.info(entityName + " with id " + t.getId() + " updated to " + t);
+//        }
+//        logger.info(entityName + " with id " + t.getId() + " doesn't exist. Cannot update to " + t);
+//
+//    }
+
 }

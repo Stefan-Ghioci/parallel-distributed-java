@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Seat implements BaseEntity<Integer> {
-    private Integer id;
-    private SeatType type;
+public class SeatDTO {
+    private Integer count;
+
 }

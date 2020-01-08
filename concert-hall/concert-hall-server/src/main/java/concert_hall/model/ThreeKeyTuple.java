@@ -1,11 +1,14 @@
 package concert_hall.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Data
-public class ThreeKeyTuple<T> {
+public@AllArgsConstructor
+class ThreeKeyTuple<T> implements Serializable {
     private T key1;
     private T key2;
     private T key3;
