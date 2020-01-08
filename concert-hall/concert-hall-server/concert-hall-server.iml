@@ -2,7 +2,14 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
-      <configuration />
+      <configuration>
+        <fileset id="fileset" name="AsyncConfiguration" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/async/AsyncConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/rest/Application.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/concert_hall/AsyncConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/concert_hall/PersistenceJPAConfig.java</file>
+        </fileset>
+      </configuration>
     </facet>
     <facet type="web" name="Web">
       <configuration>
@@ -12,7 +19,9 @@
     <facet type="jpa" name="JPA">
       <configuration>
         <setting name="validation-enabled" value="true" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="Entities" value="fc199cfc-3e23-49a6-a8c3-b91219b45c47" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
