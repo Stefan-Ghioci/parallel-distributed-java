@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 @RequestMapping("concert_hall")
 public class Controller {
 
@@ -44,13 +46,19 @@ public class Controller {
     @GetMapping("/shows")
     public @ResponseBody
     Iterable<Show> getShows() {
-        return service.getShows().join();
+        logger.info("Retrieving shows...");
+        Collection<Show> shows = service.getShows().join();
+        logger.info(shows.size() + " shows retrieved.");
+        return shows;
     }
 
     @GetMapping("/seats")
     public @ResponseBody
     Map<SeatType, Pair<Double, Integer>> getSeatInfo(@RequestParam(name = "showID") Integer showID) {
-        return service.getAvailableSeatInfo(showID).join();
+        logger.info("Retrieving seat info for show with ID=" + showID);
+        Map<SeatType, Pair<Double, Integer>> map = service.getAvailableSeatInfo(showID).join();
+        logger.info("Returning seat info map for show with ID=" + showID);
+        return map;
     }
 
 

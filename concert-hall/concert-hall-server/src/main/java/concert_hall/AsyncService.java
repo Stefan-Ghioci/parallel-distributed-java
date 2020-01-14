@@ -27,7 +27,7 @@ public class AsyncService {
 
     @Async("asyncExecutor")
     public synchronized CompletableFuture<Map<SeatType, Pair<Double, Integer>>> getAvailableSeatInfo(Integer showID) {
-        Map<SeatType, Pair<Double,Integer>> availableSeatInfo = new HashMap<>();
+        Map<SeatType, Pair<Double, Integer>> availableSeatInfo = new HashMap<>();
         priceRepository.findAll().forEach(price -> {
             int availableSeatsPerType = (int) seatRepository.findAll().stream()
                     .filter(seat -> seat.getType() == price.getType() &&
@@ -35,7 +35,7 @@ public class AsyncService {
                                     .noneMatch(ticket -> ticket.getShowID().equals(showID) &&
                                             ticket.getSeatID().equals(seat.getId())))
                     .count();
-            availableSeatInfo.put(price.getType(), Pair.of(price.getValue(),availableSeatsPerType));
+            availableSeatInfo.put(price.getType(), Pair.of(price.getValue(), availableSeatsPerType));
         });
         return CompletableFuture.completedFuture(availableSeatInfo);
     }
@@ -89,15 +89,15 @@ public class AsyncService {
     private void initializeShows() {
         if (showRepository.count() == 0) {
             showRepository.save(new Show(0,
-                    new Date(1601924400),
+                    Date.valueOf("2020-10-04"),
                     "Theatre Russian Ballet - Lacul Lebedelor",
                     "Cea mai prestigioasă trupă de Balet Rus din Sankt Petersburg vine pentru prima oară în România cu spectacolul Lacul Lebedelor ce va avea loc la Opera Națională din București pe 9 februarie 2020."));
             showRepository.save(new Show(1,
-                    new Date(1596038400),
+                    Date.valueOf("2020-08-29"),
                     "The Mono Jacks - lansare album",
                     "Trupa este o colecție de gânduri și emoții puse pe note, care a început să prindă viață în toamna lui 2008 la inițiativa lui Doru Trăscău. Formația a avut parte de un debut excelent, a lansat până acum un album și două EP-uri, și a adunat o bogată experiență de live atât în cluburi cât și la mari festivaluri."));
             showRepository.save(new Show(2,
-                    new Date(1607731200),
+                    Date.valueOf("2020-06-12"),
                     "The Illusionists",
                     "The Illusionists duc mai departe tradiția magiei de scenă într-o nouă eră, dincolo de limitele imaginației umane, purtându-și audiența într-un univers palpitant unde granița dintre realitate și iluzie dispare."));
         }
