@@ -16,3 +16,25 @@
     text-align: center;
 }
 
+.selector {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    flex-direction: row;
+}
+
+.priceMenu {
+    padding: 1vw;
+    margin: 2.5vw;
+}
+
+.buyCard{
+    padding: 1vw;
+    margin: 2.5vw;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    height: 10vh;
+}

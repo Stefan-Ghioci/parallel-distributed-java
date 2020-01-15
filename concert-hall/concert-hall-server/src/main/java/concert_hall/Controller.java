@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
 @RequestMapping("concert_hall")
 public class Controller {
 
@@ -25,6 +24,7 @@ public class Controller {
         this.service = service;
     }
 
+    @CrossOrigin
     @PostMapping("/tickets")
     public @ResponseBody
     ResponseEntity<?> sellTickets(@RequestParam(name = "showID") Integer showID,
@@ -43,6 +43,7 @@ public class Controller {
         return new ResponseEntity<>(success ? HttpStatus.OK : HttpStatus.FORBIDDEN);
     }
 
+    @CrossOrigin
     @GetMapping("/shows")
     public @ResponseBody
     Iterable<Show> getShows() {
@@ -52,6 +53,7 @@ public class Controller {
         return shows;
     }
 
+    @CrossOrigin
     @GetMapping("/seats")
     public @ResponseBody
     Map<SeatType, Pair<Double, Integer>> getSeatInfo(@RequestParam(name = "showID") Integer showID) {
@@ -62,4 +64,10 @@ public class Controller {
     }
 
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String error(Exception e) {
+        System.out.println(e.getLocalizedMessage());
+        return e.getLocalizedMessage();
+    }
 }

@@ -107,9 +107,9 @@ public class AsyncService {
         if (seatRepository.count() == 0) {
             for (int i = 0; i < 50; i++)
                 seatRepository.save(new Seat(i, SeatType.Front));
-            for (int i = 50; i < 100; i++)
+            for (int i = 50; i < 150; i++)
                 seatRepository.save(new Seat(i, SeatType.Middle));
-            for (int i = 100; i < 150; i++)
+            for (int i = 150; i < 200; i++)
                 seatRepository.save(new Seat(i, SeatType.Back));
         }
     }
