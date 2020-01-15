@@ -5,3 +5,4 @@ export const POST_TICKETS = (showId, front, middle, back) => API + "/tickets/?sh
     "&front=" + front +
     "&middle=" + middle +
     "&back=" + back;
+export const GET_BALANCE = API + "/balance";

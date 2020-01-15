@@ -15,6 +15,18 @@ public class Ticket implements BaseEntity<ThreeKeyTuple<Integer>> {
         return new ThreeKeyTuple<>(seatID,showID,saleID);
     }
 
+    public Integer getSeatID() {
+        return seatID;
+    }
+
+    public Integer getShowID() {
+        return showID;
+    }
+
+    public Integer getSaleID() {
+        return saleID;
+    }
+
     @Override
     public void setId(ThreeKeyTuple<Integer> integerThreeKeyTuple) {
         seatID = integerThreeKeyTuple.getKey1();

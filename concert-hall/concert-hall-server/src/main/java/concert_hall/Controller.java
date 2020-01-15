@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -63,6 +64,13 @@ public class Controller {
         return map;
     }
 
+    @CrossOrigin
+    @GetMapping("/balance")
+    public @ResponseBody
+    List<Double> verifyBalance() {
+        logger.info("Retrieving balance and money for bought tickets.");
+        return service.verifyBalance().join();
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

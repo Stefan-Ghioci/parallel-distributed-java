@@ -8,10 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -24,6 +21,24 @@ public class AsyncService {
     private final Repository<Seat, Integer> seatRepository;
     private final Repository<Show, Integer> showRepository;
     private final Repository<Ticket, ThreeKeyTuple<Integer>> ticketRepository;
+
+    @Async("asyncExecutor")
+    public synchronized CompletableFuture<List<Double>> verifyBalance() {
+        List<Double> values = new ArrayList<>();
+        values.add(balanceRepository.findAll().iterator().next().getAmount());
+
+        double totalSum = showRepository.findAll().stream().mapToDouble(show -> ticketRepository.findAll().stream()
+                .filter(ticket -> ticket.getShowID().equals(show.getId()))
+                .mapToDouble(ticket -> priceRepository
+                        .findById(seatRepository.findById(ticket.getSeatID()).getType())
+                        .getValue())
+                .sum())
+                .sum();
+
+        values.add(totalSum);
+
+        return CompletableFuture.completedFuture(values);
+    }
 
     @Async("asyncExecutor")
     public synchronized CompletableFuture<Map<SeatType, Pair<Double, Integer>>> getAvailableSeatInfo(Integer showID) {
